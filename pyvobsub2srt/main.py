@@ -40,14 +40,14 @@ def main():
         parser.print_usage()
         return
     elif args.invert not in ("yes", "no", "auto"):
-        print "%s is not an invert mode." % (args.lang, )
-        print "Options are: %s" % (", ".join(("yes", "no", "auto")), )
+        print("%s is not an invert mode." % (args.lang, ))
+        print("Options are: %s" % (", ".join(("yes", "no", "auto")), ))
         return 1
     else:
         ocr_tools = pyocr.get_available_tools()
         if args.lang not in ocr_tools[0].get_available_languages():
-            print "%s is not an available language." % (args.lang, )
-            print "Options are: %s" % (", ".join(ocr_tools[0].get_available_languages()), )
+            print("%s is not an available language." % (args.lang, ))
+            print("Options are: %s" % (", ".join(ocr_tools[0].get_available_languages()), ))
             return 1
         
         process_file(args.file_name, ocr_tools, args.lang, args.forcedonly, args.invert, args.background)
@@ -59,7 +59,7 @@ def process_file(file_name, ocr_tools, lang, forcedonly=False, invert="auto", ba
 
     count = 1
     for subtitle in dom.getElementsByTagName("subtitle"):
-        if not subtitle.attributes.has_key("start") or not subtitle.attributes.has_key("stop"):
+        if "start" not in subtitle.attributes or "stop" not in subtitle.attributes:
             continue # Can't do anything with these, probably a dodgy subtitle."
         
         image = get_xml_text(subtitle.getElementsByTagName("image")[0].childNodes)
@@ -71,10 +71,11 @@ def process_file(file_name, ocr_tools, lang, forcedonly=False, invert="auto", ba
         else:
             background, negate = should_invert(image)
             subprocess.call("convert " + image + " -background %s -alpha remove%s " % (background, " -negate" if negate else "") + image, shell=True)
-        print count
-        print "%s --> %s" % (subtitle.attributes["start"].value.replace(".", ","), subtitle.attributes["stop"].value.replace(".", ","))
-        print get_subtitle_text(image, ocr_tools, lang).encode("utf8")
-        print
+        print(count)
+        print("%s --> %s" % (subtitle.attributes["start"].value.replace(".", ","), subtitle.attributes["stop"].value.replace(".", ",")))
+        #print(get_subtitle_text(image, ocr_tools, lang).encode("utf8"))
+        print(get_subtitle_text(image, ocr_tools, lang))
+        print()
 
         count += 1
 
@@ -108,7 +109,7 @@ def should_invert(image):
 
     if outer[:3] != (0, 0, 0) and outer[:3] != (255, 255, 255) and \
         inner[:3] != (0, 0, 0) and inner[:3] != (255, 255, 255):
-            print "Invalid colours found.", outer, inner
+            print("Invalid colours found.", outer, inner)
             sys.exit(1)
     return "black" if outer[:3] == (0, 0, 0) else "white", outer[:3] == (0, 0, 0)
     

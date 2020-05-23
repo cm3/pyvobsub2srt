@@ -13,4 +13,4 @@
 #    You should have received a copy of the GNU General Public License
 #    along with pyvobsub2srt.  If not, see <http://www.gnu.org/licenses/>.
 
-from main import main
+from pyvobsub2srt.main import main
